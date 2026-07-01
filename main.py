@@ -15,6 +15,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Retry-After"],
 )
 
 # ---- Assigned values ----
@@ -72,10 +73,12 @@ async def rate_limit_middleware(request: Request, call_next):
                     status_code=429,
                     content={"error": "rate limit exceeded"},
                     headers={
+                        "retry-after": str(retry_after),
                         "Retry-After": str(retry_after),
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Headers": "*",
                         "Access-Control-Allow-Methods": "*",
+                        "Access-Control-Expose-Headers": "Retry-After, retry-after",
                     },
                 )
 
